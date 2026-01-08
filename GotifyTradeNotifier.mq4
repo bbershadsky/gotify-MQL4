@@ -313,7 +313,7 @@ void SendGotifyNotification(int ticket)
    
    // Build concise message
    // Format: SymPL: +12.34 | DD: 1.2%
-  message += "SymPL: " + FormatNumberWithCommas(symbolPL) + 
+  message += " SymPL: " + FormatNumberWithCommas(symbolPL) + 
                  " | DD: " + DoubleToString(drawdownPct, 1) + "%";
 
    
