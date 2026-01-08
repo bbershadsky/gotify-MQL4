@@ -13,6 +13,31 @@ input int    ScanIntervalSeconds = 1;                                      // Ho
 string KnownTickets = "";
 datetime LastScanTime = 0;
 
+string FormatNumberWithCommas(double value)
+{
+   string strVal = DoubleToString(value, 2);
+   int dotPos = StringFind(strVal, ".");
+   
+   string integerPart;
+   if(dotPos == -1)
+      integerPart = strVal;
+   else
+      integerPart = StringSubstr(strVal, 0, dotPos);
+   
+   string decimalPart = (dotPos == -1) ? "" : StringSubstr(strVal, dotPos);
+   
+   string formattedInt = "";
+   int len = StringLen(integerPart);
+   for(int i = 0; i < len; i++)
+   {
+      formattedInt = StringSubstr(integerPart, len - 1 - i, 1) + formattedInt;
+      if((i + 1) % 3 == 0 && i + 1 < len)
+         formattedInt = "," + formattedInt;
+   }
+   
+   return formattedInt + decimalPart;
+}
+
 //+------------------------------------------------------------------+
 //| Calculate total floating P/L for specific symbol (open positions only) |
 //+------------------------------------------------------------------+
@@ -288,8 +313,9 @@ void SendGotifyNotification(int ticket)
    
    // Build concise message
    // Format: SymPL: +12.34 | DD: 1.2%
-   message += " | SymPL: " + DoubleToString(symbolPL, 2) + 
-                    " | DD: " + DoubleToString(drawdownPct, 1) + "%";
+  message += "SymPL: " + FormatNumberWithCommas(symbolPL) + 
+                 " | DD: " + DoubleToString(drawdownPct, 1) + "%";
+
    
    // Build URL with token as query parameter
    string url = GotifyServer + "/message?token=" + UrlEncode(GotifyToken);
